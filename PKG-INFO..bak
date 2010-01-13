@@ -1,0 +1,134 @@
+Metadata-Version: 1.0
+Name: Products.Scrawl
+Version: 1.3.1
+Summary: Scrawl is a dirt-simple blog product for Plone.
+Home-page: http://plone.org/products/scrawl
+Author: jbaldivieso
+Author-email: jonb@onenw.org
+License: GPL
+Description: Description
+        ===========
+        
+        Scrawl is a dirt-simple blog product for Plone.  It copies the "News Item"
+        content type to create a "Blog Entry" (with a slightly tweaked view template)
+        and adds an alternative view to Smart Folders (blog_view).  Note that blog_view
+        shows either the description of each contained blog entry (if it exists) or the
+        entire body in it, so it's up to the user to limit those results in an intelligent
+        way so that page loads doesn't take too long.
+        
+        Scrawl works in Plone 2.1, 2.5, and 3.x.
+        
+        Installation
+        ============
+        
+        Installing using buildout
+        -------------------------
+        
+        Simply add Products.Scrawl to your eggs list and rerun buildout.
+        
+        Installing as an old-style product
+        ----------------------------------
+        
+        Download the old-style product tarball from http://plone.org/products/scrawl.
+        
+        Place Scrawl in the Products directory of your Zope instance
+        and restart the server.
+        
+        Final step: Add to your Plone site
+        ----------------------------------
+        
+        Either go to the 'Site Setup' page in Plone and click on
+        'Add/Remove Products' or use the Quick Installer in the ZMI.
+        
+        
+        Migration
+        =========
+        
+        There is a basic migrator available for Quills -> Scrawl.  Read the docstring
+        in Products.Scrawl.Extensions.migrate_entries for more details.  YMMV.
+        
+        
+        Written by
+        ==========
+        
+        ONE/Northwest <jonb@onenw.org>
+        
+        Changelog
+        =========
+        
+        Scrawl 1.3.1 - 2009.06.11
+        -------------------------------
+        - No changes, but re-releasing because the egg broke during shipping.
+        [jbaldivieso]
+        
+        
+        Scrawl 1.3 - 2009.06.10
+        -------------------------------
+        
+        - Added Dutch translations. [markvl]
+        
+        - Added Japanese translation [papago]
+        
+        - Added Turkish translation [uyar]
+        
+        - Added Brazilian portuguese translation [danipessanha]
+        
+        - Fixed issue #9 (compilation problems running buildout on certain
+        platforms) [jbaldivieso]
+        
+        - Fixed issue #10 (Duplicate Keyword Issue) [danipessanha]
+        
+        Scrawl 1.2 - final - 2009.10.01
+        -------------------------------
+        
+        - added i18n markup for the plone 2.1/2.5 layer and added various adjustments
+        added previously to the plone 3 layer. [pelle]
+        
+        - lets us a div block for the rich text in the blog_view.pt since there could
+        be inserted various block elements and that will create invalid html like
+        "<p><div>My special div block</div></p>". [pelle]
+        
+        - (re)enabled the 'read more' but with a condition so its only shown if the
+        body text isn't show http://plone.org/products/scrawl/issues/2 [pelle]
+        
+        - added i18n support (plone 3.0) and a Danish translation [pelle]
+        
+        
+        Scrawl 1.1 - final
+        ------------------
+        
+        - re-released as an egg. No other changes. [jbaldivieso]
+        
+        Scrawl 1.0 - final
+        ------------------
+        
+        - Changed templates slightly to fully enable Plone 2.1 support. [jbaldivieso]
+        
+        - Cleaned up presentation of blog entries if they haven't been published yet
+        (and therefore lack Effective Date). [jbaldivieso]
+        
+        Scrawl 1.0 - beta 3
+        -------------------
+        
+        - Fixed a bug in Plone 3.0 where the Plone Types Ctrl Panel protested when you
+        tried to save settings for Blog Entries.  [jbaldivieso]
+        - Made Blog Entries open for commenting by default [jbaldivieso]
+        - Added Blog Entries to the portal factory, so that skeleton Blog Entries
+        don't clutter up your site when you add one but don't save it. [jbaldivieso]
+        - Added External Method for migrating Quills blog entries to Scrawl [ohtogo]
+        
+        Scrawl 1.0 - beta 2
+        -------------------
+        
+        - slimmed down blog_view so that it just shows descriptions of blog entries
+        if they exist (full bodies otherwise) [jbaldivieso]
+        
+        Scrawl 1.0 - beta 1
+        -------------------
+        
+        - initial release [jbaldivieso]
+        
+Platform: UNKNOWN
+Classifier: Programming Language :: Python
+Classifier: Framework :: Plone
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)

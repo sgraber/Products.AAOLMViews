@@ -1,0 +1,26 @@
+<metal:block tal:define="dummy python:request.RESPONSE.setHeader('Content-Type', 'text/xml')" />
+<metal:block tal:define="dummy python:request.RESPONSE.setHeader('Content-Disposition', 'attachment')" />
+<metal:block tal:define="dummy python:request.RESPONSE.setHeader('charset', 'UTF-8')" />
+<tal:blah  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+           xmlns:tal="http://xml.zope.org/namespaces/tal"
+           xmlns:metal="http://xml.zope.org/namespaces/metal">
+<data tal:define="toLocalizedTime nocall:context/@@plone/toLocalizedTime;
+                  brains python:container.portal_catalog(portal_type='Event',
+                                                         review_state=['published']);">
+    <tal:listing condition="brains">
+        <tal:block tal:repeat="brain brains">
+            <tal:defs tal:define="item_start brain/start/ISO|brain/StartDate|nothing;
+                                  item_end brain/end/ISO|brain/EndDate|nothing;">
+    <event isDuration="true"
+           image="event_icon.gif"
+           tal:attributes="start python:toLocalizedTime(item_start,long_format=1);
+                           end python:toLocalizedTime(item_end,long_format=1);
+                           title brain/pretty_title_or_id|nothing;"
+           tal:content="brain/location|nothing">
+        Our Event information goes here
+    </event>
+            </tal:defs>
+        </tal:block>
+    </tal:listing>
+</data>
+</tal:blah>
