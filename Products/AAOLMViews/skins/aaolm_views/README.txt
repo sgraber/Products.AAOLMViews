@@ -13,3 +13,5 @@ New Views:
 Customizations:
 
 1. document_view.pt     Document    Modifies a standard document to look like an AAOLM article
+2. event_view.pt        Event       Adds Google Map + Directions link to Event
+3. document_byline.pt               Changed the byline to say 'By' instead of 'Contributors'
