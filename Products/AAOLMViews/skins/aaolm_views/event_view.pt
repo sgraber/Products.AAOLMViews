@@ -139,7 +139,9 @@
                 </tr>
                 <tr tal:condition="here/location">
                     <th i18n:translate="event_where">Where</th>
-                    <td class="location" tal:define="loc here/location">
+                    <td class="location" 
+                        tal:define="url_quote_plus python:modules['Products.PythonScripts.standard'].url_quote_plus;
+                                    loc python:url_quote_plus(here.location);">
                         <metal:field use-macro="python:here.widget('location', mode='view')">
                         Location
                         </metal:field>
