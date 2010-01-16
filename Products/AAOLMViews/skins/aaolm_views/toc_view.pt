@@ -62,7 +62,7 @@
             <br />
             <!-- END: Table of Contents s3Slider -->
             </tal:remove>
-    
+            
     		<!-- TOC image fadein / fadeout section -->
     		<div id="slider"
     			 tal:condition="python: 'toc' in folderContentIds">
@@ -123,7 +123,7 @@
 
                         <a href="#"
                            class="summary url"
-                           tal:condition="python:item_type != 'Link'"
+                           tal:condition="python:item_type != 'Link' or (item_type == 'Link' and item_object.layout != 'link_view')"
                            tal:attributes="href python:(item_type in use_view_action) and (item_url+'/view') or (item_url);"
                            tal:content="item_title_or_id">
                             Item Title
@@ -131,8 +131,8 @@
 
                         <a href="#"
                            class="link-plain"
-                           tal:condition="python:item_type == 'Link'"
-                           tal:content="item_title_or_id"
+                           tal:condition="python:item_type == 'Link' and item_object.layout == 'link_view'"
+                           tal:content="item_title_or_id" 
                            tal:attributes="href item/getRemoteUrl;">
                             External Link
                         </a>
