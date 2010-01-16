@@ -237,6 +237,58 @@
                 </div>
             </tal:block>
 
+                <!-- START: Reefkeeping Events -->
+                <div class="tileItem visualIEFloatFix vevent contenttype-document">
+                    <div class="tocImg" style="float: left;">
+                        <a tal:attributes="href string:${portal_url}/events">
+                            <img class="image-left" tal:attributes="src string:${portal_url}/tocevents.jpg">
+                        </a>                                            
+                    </div>
+                    <h2 class="tileHeadline">
+                        <a href="http://localhost:8080/advancedaquarist/2008/aaeditorial" 
+                           class="summary url">Reefkeeping Events: What's Happening in Your Area?</a>
+                    </h2>
+                    <div class="documentByLine">
+                        By Advanced Aquarist Readers
+                    </div>
+                    <p class="tileBody">
+                        <span class="description">Check to see if an event is happening in your area!</span>
+                    </p>
+                    <p class="tileFooter">
+                        <a tal:attributes="href string:${portal_url}/events">
+                            Read More&hellip;
+                        </a>
+                    </p>
+                    <div class="visualClear"><!-- --></div>
+                </div>
+                <!-- END: Reefkeeping Events -->
+
+                <!-- START: Marine News -->
+                <div class="tileItem visualIEFloatFix vevent contenttype-document">
+                    <div class="tocImg" style="float: left;">
+                        <a tal:attributes="href string:${portal_url}/marinenews">
+                            <img class="image-left" src="tocaaolm.jpg">
+                        </a>                                            
+                    </div>
+                    <h2 class="tileHeadline">
+                        <a href="http://localhost:8080/advancedaquarist/2008/aaeditorial" 
+                           class="summary url">Reefs in the News</a>
+                    </h2>
+                    <div class="documentByLine">
+                        By Advanced Aquarist Readers
+                    </div>
+                    <p class="tileBody">
+                        <span class="description">Links to various online media resources that discuss the state of the worlds reefs, interesting marine information, etc.</span>
+                    </p>
+                    <p class="tileFooter">
+                        <a tal:attributes="href string:${portal_url}/events">
+                            Read More&hellip;
+                        </a>
+                    </p>
+                    <div class="visualClear"><!-- --></div>
+                </div>
+                <!-- END: Marine News -->
+
             <!-- Navigation -->
             <div metal:use-macro="here/batch_macros/macros/navigation" />
 
