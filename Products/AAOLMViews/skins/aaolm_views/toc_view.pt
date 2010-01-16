@@ -46,9 +46,41 @@
                             use_view_action site_properties/typesUseViewActionInListings|python:();
                             over_limit python: limit_display and len(folderContents) > limit_display;
                             folderContents python: (over_limit and folderContents[:limit_display]) or folderContents;
-                            batch folderContents">
+                            batch folderContents;
+                            getParentNode python: context.getParentNode();
+                            folderContentIds python: getParentNode.contentIds();">
         <tal:listing condition="folderContents">
 
+    		<tal:remove replace="nothing">
+    		    Placeholder in case we need to put something here if we don't have a slider present
+    		<!-- START: Table of Contents s3Slider -->
+            <div id="toc-header" 
+            	 tal:condition="python: 'toc' not in folderContentIds">
+                <!-- <img src="#" alt="Table of Contents" title="Table of Contents"
+                     tal:attributes="src string:$portal_url/tocview.jpg" /> -->
+            </div>
+            <br />
+            <!-- END: Table of Contents s3Slider -->
+            </tal:remove>
+    
+    		<!-- TOC image fadein / fadeout section -->
+    		<div id="slider"
+    			 tal:condition="python: 'toc' in folderContentIds">
+    			<tal:slider tal:define="issue python: '/'.join(getParentNode.getPhysicalPath());
+    			                        sliderfolder string:${issue}/toc;
+    			                        images python: container.portal_catalog(portal_type='Image', path=sliderfolder);">
+    			<div class="slide"
+    				 tal:repeat="image images">
+    				<img src="#"
+    					 tal:attributes="src image/getURL" alt="" />
+    				<span><strong tal:content="image/pretty_title_or_id">January 2008</strong>
+    				<br/>
+    				    <tal:desc tal:content="image/Description">Volume VI, Issue I</tal:desc>
+    				</span>
+    			</div>
+    			</tal:slider>
+    		</div>
+		
             <tal:block tal:repeat="item folderContents">
                 <div class="tileItem visualIEFloatFix vevent" 
                      tal:define="item_url item/getURL|item/absolute_url;
