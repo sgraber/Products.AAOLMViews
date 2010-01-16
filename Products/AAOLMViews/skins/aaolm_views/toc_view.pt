@@ -118,6 +118,35 @@
                              tal:replace="structure python: path('nocall:item_object/tag')(scale='thumb', css_class='tileImage')" />
                     </a>
 
+                <tal:remove replace="nothing">
+                    <!-- START: Social Sharing -->
+                    <div class="sociable"
+                         style="float:right;">
+                        <script type="text/javascript"
+                                tal:content="string: tweetmeme_url = '${item_url}';"></script>
+                        <script type="text/javascript" src="http://tweetmeme.com/i/scripts/button.js"></script>
+                        <br />
+                        <a name="fb_share" 
+                           type="box_count" 
+                           share_url="item_url" 
+                           style="float:right;"
+                           href="http://www.facebook.com/sharer.php">Share</a>
+                        <script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script>
+                    </div>
+                    <!-- END: Social Sharing -->
+                </tal:remove>
+                    
+                    <!-- START: Custom TOC image -->
+                    <div class="tocImg" style="float:left;">
+                        <a tal:attributes="href item_url">
+                            <img class="image-left"
+                                 tal:define="img_name python: item_id +'.jpg'"
+                                 tal:condition="python: img_name in folderContentIds"
+                                 tal:attributes="src img_name" />
+                        </a>                                            
+                    </div>
+                    <!-- END: Custom TOC image -->
+
                     <h2 class="tileHeadline"
                         metal:define-macro="listitem">
 
