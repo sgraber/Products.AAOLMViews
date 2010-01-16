@@ -34,8 +34,7 @@
                          templateId=templateId, macro='text-field-view');
                          text here/aq_explicit/getText|nothing"
              tal:condition="text"
-             tal:attributes="class python:test(here.Format() in ('text/structured',
-                                                   'text/x-rst', ), 'stx' + kss_class, 'plain' + kss_class)">
+             tal:attributes="class python:(here.Format() in ('text/structured', 'text/x-rst', )) and ('stx' + kss_class) or ('plain' + kss_class)">
             <div metal:define-slot="inside" tal:replace="structure text">The body</div>
         </div>
 
@@ -72,7 +71,7 @@
 
                     <a href="#"
                        tal:condition="python:item_type != 'Link'"
-                       tal:attributes="href python:test(item_type in use_view_action, item_url+'/view', item_url);">
+                       tal:attributes="href python:(item_type in use_view_action) and (item_url+'/view') or (item_url);">
                         <img src="" alt=""
                              tal:condition="exists:item_object/image_thumb"
                              tal:replace="structure python: path('nocall:item_object/tag')(scale='thumb', css_class='tileImage')" />
@@ -93,7 +92,7 @@
                         <a href="#"
                            class="summary url"
                            tal:condition="python:item_type != 'Link'"
-                           tal:attributes="href python:test(item_type in use_view_action, item_url+'/view', item_url);"
+                           tal:attributes="href python:(item_type in use_view_action) and (item_url+'/view') or (item_url);"
                            tal:content="item_title_or_id">
                             Item Title
                         </a>
@@ -158,7 +157,7 @@
 
                     <p class="tileFooter">
                         <a href=""
-                           tal:attributes="href python:test(item_type in use_view_action, item_url+'/view', item_url);"
+                           tal:attributes="href python:(item_type in use_view_action) and (item_url+'/view') or (item_url);"
                            i18n:translate="read_more">
                         Read More&hellip;
                         </a>
@@ -180,6 +179,91 @@
                 There are currently no items in this folder.
             </p>
         </metal:empty>
+
+			<table id="topic-toc" class="toc-table">
+				<caption></caption>
+				<thead></thead>
+				<tfoot></tfoot>
+			 	<tbody>
+			 		<tr valign="top">
+			 			<td>
+			 				<h2>Feedback</h2>
+							 <p>We welcome your
+							 feedback. If you have ideas for new subjects, articles, or for
+							 Advanced Aquarist&#39;s Online Magazine in general, please let us know
+							 either in our <a href="http://www.reefs.org/phpBB2/viewforum.php?f=38">Editorial Discussion Forum</a>
+							 or email them to our Editor, <a href="mailto:terry@advancedaquarist.com?CC=liquid@reefs.org&Subject=Advanced%20Aquarist%20Feedback">Terry
+							 Siegel</a>.</p>
+						</td>
+			 			<td>
+			 				<h2>Subscribe</h2>
+							 <p>Interested in
+							 being notified when the next issue of Advanced Aquarist's Online
+							 Magazine is available?  Either subscribe to our website news <img src="rss.gif" alt="RSS" style="border:0" />
+							 <a href=""
+							    tal:attributes="href string:$portal_url/search_rss?portal_type=Document&review_state=published&sort_on=modified&sort_order=reverse">RSS feed</a>
+							 or send an email to <a href="mailto:reefs-newsletter-subscribe@reefs.org">reefs-newsletter-subscribe@reefs.org</a>
+							 to subscribe to our notification newsletter.</p>
+			 				<p class="discreet">(This newsletter will also occasionally contain information about reefs.org updates in addition
+			      			to information about Advanced Aquarist.)</p>
+			 
+			 			</td>
+			 			<td>
+			 				<h2>Advertising</h2>
+							 <p>For information
+							 on advertising with Advanced Aquarist's Online Magazine, please <a href="mailto:advertising@advancedaquarist.com?CC=len@reefs.org&Subject=Advertising%20in%20Advanced%20Aquarist%20">contact
+							 us</a> via the provided link. We have a variety of packages that
+							 might be suitable for your business.</p>
+						</td>
+			 		</tr>
+			 		<tr valign="top">
+			 			<td>
+			 				<h2>Support our Sponsors</h2>
+							 <p>Please take a
+							 moment to check out the 
+							 <a href=""
+							    tal:attributes="href string:$portal_url/moreinfo/sponsors"> various
+							 online stores</a> that advertise with us. It is through their generous
+							 sponsorship that this online magazine exists and is free of charge. </p>
+							 <p>Make
+							 sure that when you do business with our sponsors that you tell
+							 them that you saw their ad on Advanced Aquarist.</p>
+						</td>
+			 			<td>
+			 				<h2>Advanced Aquarist's Gear</h2>
+							 <p>Take a minute
+							 to head over to our <a href="http://www.cafeshops.com/advaquarist">online
+							 store at Cafepress</a>. You can deck yourself out in Advanced Aquarist's
+							 gear: t-shirts, mugs, mousepads, etc. Plus purchasing items helps
+							 fund our online magazine to a small degree.
+							</p>
+			
+						  	<p align="center">
+						    	<a href="http://www.cafeshops.com/advaquarist" target="_blank">
+						      	<img src="" 
+						           tal:attributes="src string:$portal_url/toccafepress.jpg" 
+						           border="0" 
+						           height="187" 
+						           width="172"
+						           alt="Advanced Aquarist's Store at CafePress"
+						           title="Advanced Aquarist's Store at CafePress" />
+						    	</a>
+						  	</p>
+						</td>
+						<td>
+						   	<h2>Article Submissions</h2>
+						   	<p>If you are an
+							 author and are interested in writing for Advanced Aquarist's Online
+							 Magazine, please email our Editor, <a href="mailto:terry@advancedaquarist.com">Terry
+							 Siegel</a>.</p>
+							 <p>Or, if you are
+							 interested in having your marine aquarium featured in an upcoming
+							 issue (who wouldn't?), please email <a href="mailto:wade@reefs.org">Wade
+							 Lehmann</a> for instructions on submitting your tank for publication.</p>
+						</td>
+			 		</tr>
+			 	</tbody>
+			</table>
 
         </tal:foldercontents>
         </metal:listingmacro>
