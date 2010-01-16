@@ -98,6 +98,7 @@
                                        item_start item/start/ISO|item/StartDate|nothing;
                                        item_end item/end/ISO|item/EndDate|nothing;
                                        item_object item/getObject;
+                                       item_contributors item_object/Contributors|nothing;
                                    "
                      tal:attributes="class string:tileItem visualIEFloatFix vevent ${item_type_class}">
 
@@ -166,6 +167,13 @@
                             External Link
                         </a>
                     </h2>
+
+	                <!-- Our custom byline for Authors using the Contributors field on the content item -->
+	                <div class="documentByLine" tal:condition="item_contributors">
+	                    By 
+	                    <span tal:content="python: ', '.join(item_contributors)">Article author names go here</span>
+	                </div>
+                    <!-- Our custom byline for Authors using the Contributors field on the content item -->
 
                     <div class="documentByLine" tal:condition="python: site_properties.allowAnonymousViewAbout or not isAnon">
                     <tal:event condition="python: item_type == 'Event'">
