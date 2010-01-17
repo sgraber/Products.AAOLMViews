@@ -37,7 +37,7 @@ def install(portal):
     if view not in news_item.view_methods:
         news_item._updateProperty('view_methods', news.view_methods + (view,))
         news_item.allow_discussion = True
-    print >> out, "Tweaked 'News Item' FTU settings"
+    print >> out, "Tweaked 'News Item' FTU settings"    
     
     # make new views available to Smart Folder
     views = ['blog_view',               # Blog Listing View
@@ -58,8 +58,15 @@ def install(portal):
     link = portal_types.Link
     if view not in link.view_methods:
         link._updateProperty('view_methods', link.view_methods + (view,))
+        link.allow_discussion = True
         print >> out, "Made %s available for Links.\n" % view
-    
+
+    # allow discussion on Pages, Links, and Events (in addition to News Items and Links)
+    page = portal_types.Document
+    page.allow_discussion = True
+    event = portal_types.Event
+    event.allow_discussion = True
+
     print >> out, "Installation complete."
     return out.getvalue()
 
@@ -132,7 +139,7 @@ def uninstall(portal, reinstall=False):
         # remove installed view from News Item view methods
         view_methods = [v for v in news_item.view_methods if v != view]
         news_item._updateProperty('view_methods', view_methods)
-        news.allow_discussion = False
+        # news.allow_discussion = False
         news_item.default_view = old_view
         news_item.immediate_view = old_view
         # reset views to defaults if they used a view from this product
