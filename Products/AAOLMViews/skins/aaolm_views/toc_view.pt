@@ -67,23 +67,26 @@
             <!-- END: Table of Contents s3Slider -->
             </tal:remove>
             
-    		<!-- TOC image fadein / fadeout section -->
-    		<div id="slider"
-    			 tal:condition="python: 'toc' in folderContentIds">
-    			<tal:slider tal:define="issue python: '/'.join(getParentNode.getPhysicalPath());
-    			                        sliderfolder string:${issue}/toc;
-    			                        images python: container.portal_catalog(portal_type='Image', path=sliderfolder);">
-    			<div class="slide"
-    				 tal:repeat="image images">
-    				<img src="#"
-    					 tal:attributes="src image/getURL" alt="" />
-    				<span><strong tal:content="image/pretty_title_or_id">January 2008</strong>
-    				<br/>
-    				    <tal:desc tal:content="image/Description">Volume VI, Issue I</tal:desc>
-    				</span>
-    			</div>
-    			</tal:slider>
-    		</div>
+            <!-- START: s3slider TOC image fadein / fadeout section -->
+            <div id="s3slider"
+            	 tal:condition="python: 'toc' in folderContentIds">
+            	<ul id="s3sliderContent"
+            	    tal:define="issue python: '/'.join(getParentNode.getPhysicalPath());
+            	                        sliderfolder string:${issue}/toc;
+            	                        images python: container.portal_catalog(portal_type='Image', path=sliderfolder);">
+                	<li class="s3sliderImage"
+                		tal:repeat="image images">
+                		<img src="#"
+                			 tal:attributes="src image/getURL" alt="" />
+                		<span><strong tal:content="image/pretty_title_or_id">January 2008</strong>
+                		<br/>
+                		    <tal:desc tal:content="image/Description">Volume VI, Issue I</tal:desc>
+                		</span>
+                	</li>
+                	<div class="clear s3sliderImage"></div>
+            	</ul>
+            </div>
+            <!-- END: s3slider TOC image fadein / fadeout section -->
 		
             <tal:block tal:repeat="item folderContents">
                 <div class="tileItem visualIEFloatFix vevent" 
