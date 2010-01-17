@@ -125,7 +125,10 @@
                             use_view_action site_properties/typesUseViewActionInListings|python:();
                             over_limit python: limit_display and len(folderContents) > limit_display;
                             folderContents python: (over_limit and folderContents[:limit_display]) or folderContents;
-                            batch folderContents">
+                            batch folderContents;
+                            portal_discussion nocall:context/portal_discussion;
+                            isDiscussionAllowedFor nocall:portal_discussion/isDiscussionAllowedFor;
+                            getDiscussionFor nocall:portal_discussion/getDiscussionFor;">
         <tal:listing condition="folderContents">
 
             <tal:block tal:repeat="item folderContents">
@@ -145,7 +148,8 @@
                                        item_start item/start/ISO|item/StartDate|nothing;
                                        item_end item/end/ISO|item/EndDate|nothing;
                                        item_object item/getObject;
-                                   "
+                                       commenting python:isDiscussionAllowedFor(item_object) and getDiscussionFor(item_object);
+                                       reply_count python:commenting is not False and commenting.replyCount(item_object);"
                      tal:attributes="class string:tileItem visualIEFloatFix vevent ${item_type_class}">
 
                     <a href="#"
@@ -235,6 +239,15 @@
                     </p>
 
                     <p class="tileFooter">
+                        <span style="float:right;"
+                              tal:condition="python: reply_count is not False">
+                           <img tal:attributes="src string:${portal_url}/comments.jpg" alt="" />
+                            <script tal:content="string:var idcomments_acct = 'e4e4e4a9d8ed15755bdc24e5fe4fb184';
+                                                        var idcomments_post_id = '${item_url}';
+                                                        var idcomments_post_url = '${item_url}';">
+                            </script>
+                            <script type="text/javascript" src="http://www.intensedebate.com/js/genericLinkWrapperV2.js"></script>
+                        </span>  
                         <a href=""
                            tal:attributes="href python:test(item_type in use_view_action, item_url+'/view', item_url);"
                            i18n:translate="read_more">
