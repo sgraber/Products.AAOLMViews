@@ -15,7 +15,13 @@
                       text python:context.CookedBody(stx_level=2);
                       len_text python:len(text.strip());
                       ploneview context/@@plone;
-                      toLocalizedTime nocall:ploneview/toLocalizedTime;">
+                      toLocalizedTime nocall:ploneview/toLocalizedTime;
+                      portal_discussion nocall:context/portal_discussion;
+                      isDiscussionAllowedFor nocall:portal_discussion/isDiscussionAllowedFor;
+                      getDiscussionFor nocall:portal_discussion/getDiscussionFor;
+                      talkback python:isDiscussionAllowedFor(context) and getDiscussionFor(context);
+                      reply_count python:talkback is not False and talkback.replyCount(context);
+                      item_url context/absolute_url">
 
         <div tal:replace="structure provider:plone.abovecontenttitle" />
 
@@ -58,6 +64,16 @@
                i18n:translate="label_perma_link"
                i18n:attributes="title label_perma_link_title"
                tal:attributes="href context/absolute_url">Permalink</a>
+            |
+            <span class="comment-info" 
+                 i18n:domain="scrawl"
+                 tal:condition="python:reply_count is not False">
+                 <script tal:content="string:var idcomments_acct = 'e4e4e4a9d8ed15755bdc24e5fe4fb184';
+                                             var idcomments_post_id = '${item_url}';
+                                             var idcomments_post_url = '${item_url}';">
+                </script>
+                <script type="text/javascript" src="http://www.intensedebate.com/js/genericLinkWrapperV2.js"></script>
+            </span>
 
             <div class="keyword-info"
                  i18n:domain="scrawl"
