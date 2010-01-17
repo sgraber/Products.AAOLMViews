@@ -12,7 +12,8 @@
     <metal:main-macro define-macro="main"
                       tal:define="kssClassesView context/@@kss_field_decorator_view;
                                   getKssClasses nocall:kssClassesView/getKssClassesInlineEditable;
-                                  templateId template/getId">
+                                  templateId template/getId;
+                                  controlPanel python:modules['Products.CMFCore.utils'].getToolByName(here, 'portal_controlpanel');">
 
         <div tal:replace="structure provider:plone.abovecontenttitle" />
 
@@ -259,7 +260,7 @@
                         </a>                                            
                     </div>
                     <h2 class="tileHeadline">
-                        <a href="http://localhost:8080/advancedaquarist/2008/aaeditorial" 
+                        <a tal:attributes="href string:${portal_url}/events"
                            class="summary url">Reefkeeping Events: What's Happening in Your Area?</a>
                     </h2>
                     <div class="documentByLine">
@@ -285,7 +286,7 @@
                         </a>                                            
                     </div>
                     <h2 class="tileHeadline">
-                        <a href="http://localhost:8080/advancedaquarist/2008/aaeditorial" 
+                        <a tal:attributes="href string:${portal_url}/marinenews" 
                            class="summary url">Reefs in the News</a>
                     </h2>
                     <div class="documentByLine">
@@ -295,7 +296,7 @@
                         <span class="description">Links to various online media resources that discuss the state of the worlds reefs, interesting marine information, etc.</span>
                     </p>
                     <p class="tileFooter">
-                        <a tal:attributes="href string:${portal_url}/events">
+                        <a tal:attributes="href string:${portal_url}/marinenews">
                             Read More&hellip;
                         </a>
                     </p>
