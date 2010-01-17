@@ -42,10 +42,7 @@ def install(portal):
     # make new views available to Smart Folder
     views = ['blog_view',               # Blog Listing View
              'toc_view',                # Issue Table of Contents
-             'timeline_view',           # Simile Timeline for Events
-             'googlemap_view',          # Google Map for Events
              'timelinemap_view',        # Timeline + Map for Events
-             'slideshow_view',          # Photo Slideshow
              ]
     topic = portal_types.Topic
     for view in views:
@@ -53,13 +50,20 @@ def install(portal):
             topic._updateProperty('view_methods', topic.view_methods + (view,))
             print >> out, "Made %s available for topics.\n" % view        
         
-    # make video view available to Links
+    # make video_view available to Links
     view = 'video_view'
     link = portal_types.Link
     if view not in link.view_methods:
         link._updateProperty('view_methods', link.view_methods + (view,))
         link.allow_discussion = True
         print >> out, "Made %s available for Links.\n" % view
+
+    # make s3slider_view available to Links
+    view = 's3slider_view'
+    folder = portal_types.Folder
+    if view not in folder.view_methods:
+        folder._updateProperty('view_methods', folder.view_methods + (view,))
+        print >> out, "Made %s available for Folders.\n" % view
 
     # allow discussion on Pages, Links, and Events (in addition to News Items and Links)
     page = portal_types.Document
@@ -90,10 +94,7 @@ def uninstall(portal, reinstall=False):
     portal_types = getToolByName(portal, 'portal_types')
     views = ['blog_view',               # Blog Listing View
              'toc_view',                # Issue Table of Contents
-             'timeline_view',           # Simile Timeline for Events
-             'googlemap_view',          # Google Map for Events
              'timelinemap_view',        # Timeline + Map for Events
-             'slideshow_view',          # Photo Slideshow
              ]
     old_view = 'folder_summary_view'
     topic = portal_types.Topic
@@ -129,6 +130,25 @@ def uninstall(portal, reinstall=False):
                 obj.layout = old_view
         print >> out, "Removed '%s' from view_methods for Links and reset them to their default view templates." % view
 
+    # remove our custom view from Folders
+    view = 's3slider_view'
+    old_view = 'atct_album_view'
+    portal_types = getToolByName(portal, 'portal_types')
+    folder = portal_types.Folder
+    
+    if view in folder.view_methods:
+        # remove installed view from Folder view methods
+        view_methods = [v for v in folder.view_methods if v != view]
+        folder._updateProperty('view_methods', view_methods) 
+        print >> out, "Removed '%s' view from Folder content type." % view
+        # reset views to defaults if they used a view from this product
+        brains = portal.portal_catalog.searchResults(portal_type="Folder")
+        for brain in brains:
+            obj = brain.getObject()
+            if view in obj.layout:
+                obj.layout = old_view
+        print >> out, "Removed '%s' from view_methods for Folders and reset them to their default view templates." % view
+
     # remove our custom view from News Items
     view = 'blog_view'
     old_view = 'newsitem_view'
@@ -149,6 +169,3 @@ def uninstall(portal, reinstall=False):
             if view in obj.layout:
                 obj.layout = old_view        
         print >> out, "Removed '%s' from view_methods for News Items and reset them to their default view templates." % view
-    
-    print >> out, "Uninstallation complete."
-    return out.getvalue()
