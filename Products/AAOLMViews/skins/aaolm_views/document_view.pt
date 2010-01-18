@@ -53,10 +53,18 @@
            class="discreet">
             This item does not have any body text, click the edit tab to change it.
         </p>
-        
+
+        <div tal:replace="structure python: here.typogrify_text(text=text)">
+            TYPOGRIFIED TEXT REPLACED HERE
+        </div>
+
+        <tal:remove tal:replace="nothing">
         <metal:field use-macro="python:here.widget('text', mode='view')">
-        Body text
+            Body text
         </metal:field>
+        </tal:remove>
+
+
 
         <!-- google ad code START -->
         <div class="adsense centered">
