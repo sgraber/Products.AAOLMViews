@@ -3,6 +3,7 @@
  *
  * Copyright David Hong 2009
  * http://davidhong.id.au/jquery/google/maps/
+ * http://code.google.com/p/jquery-googlemap/
  *
  * Simplified Google Maps API integrated into jQuery
  *
