@@ -145,8 +145,8 @@ def uninstall(portal, reinstall=False):
         brains = portal.portal_catalog.searchResults(portal_type="Folder")
         for brain in brains:
             obj = brain.getObject()
-            if view in obj.layout:
-                obj.layout = old_view
+            #if view in obj.layout:
+            #    obj.layout = old_view
         print >> out, "Removed '%s' from view_methods for Folders and reset them to their default view templates." % view
 
     # remove our custom view from News Items
