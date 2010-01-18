@@ -1,6 +1,11 @@
 from Products.CMFCore.DirectoryView import registerDirectory
 from Products.AAOLMViews.config import GLOBALS
 
+# next three lines are for importing security routines to allow use of re module
+from AccessControl import allow_class, allow_type
+from AccessControl import ModuleSecurityInfo
+
+
 registerDirectory('skins', GLOBALS)
 
 # Parts of the installation process depend on the version of Plone.
@@ -25,3 +30,17 @@ else:
 def initialize(context):
     pass
     
+
+# allow security clearance
+ModuleSecurityInfo('re').declarePublic('compile', 'findall',
+    'match', 'search', 'split', 'sub', 'subn', 'error',
+    'I', 'L', 'M', 'S', 'X')
+import re
+import typogrify
+import smartypants
+
+allow_type(type(re.compile('')))
+allow_type(type(re.match('x','x')))
+allow_type(type(re.sub('', '', '')))
+allow_class(typogrify)
+allow_class(smartypants)
