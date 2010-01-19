@@ -54,7 +54,7 @@
             This item does not have any body text, click the edit tab to change it.
         </p>
 
-        <div tal:replace="structure python: here.typogrify_text(text=text)">
+        <div tal:content="structure python: context.typogrify_text(text)">
             TYPOGRIFIED TEXT REPLACED HERE
         </div>
 
