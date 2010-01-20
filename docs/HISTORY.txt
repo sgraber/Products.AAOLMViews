@@ -1,6 +1,13 @@
 Changelog
 =========
 
+AAOLMViews 0.1 - 2010.01.19
+-------------------------------
+
+  - initial work to customize Scrawl's codebase for installing custom views
+    and code for Advanced Aquarist
+    
+
 Scrawl 1.3.x - UNRELEASED
 -------------------------------
 
