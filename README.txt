@@ -1,6 +1,7 @@
 Products.AAOLMViews
 
 Custom Plone views for Advanced Aquarist's Online Magazine
+(Based on Scrawl 1.3.1)
 
 Description
 ===========
