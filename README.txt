@@ -17,6 +17,8 @@ Topics (new views):
 * Blog Listing - lists items like a blog
 * Magazine Issue Table of Contents
 * Events Listing that uses Simile Timeline + Google Maps to visualize Events
+
+Folders (new view):
 * Slideshow for Photos
 
 News Items (new views):
@@ -30,6 +32,7 @@ Events (customized):
 
 Pages (customized):
 * Contributors are now listed as Authors
+* Uses typogrify and smartypants for pretty markup
 
 
 This product, like Scrawl, works in Plone 2.1, 2.5, 3.x, and 4.0.
@@ -53,7 +56,7 @@ template.
 Installing using buildout
 -------------------------
 
-Simply add Products.AAOLM to your eggs list and rerun buildout.
+Simply add Products.AAOLMViews to your eggs list and rerun buildout.
 
 Installing as an old-style product
 ----------------------------------
@@ -61,7 +64,7 @@ Installing as an old-style product
 Download the product from:
 http://github.com/sgraber/Products.AAOLMViews/archives/master.
 
-Place AAOLMViews in the Products directory of your Zope instance
+Place Products.AAOLMViews in the Products directory of your Zope instance
 and restart the server.
 
 Final step: Add to your Plone site
