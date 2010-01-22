@@ -21,7 +21,10 @@
                       getDiscussionFor nocall:portal_discussion/getDiscussionFor;
                       talkback python:isDiscussionAllowedFor(context) and getDiscussionFor(context);
                       reply_count python:talkback is not False and talkback.replyCount(context);
-                      item_url context/absolute_url">
+                      item_url context/absolute_url;
+                      author context/Creator;
+                      portrait python: mtool.getPersonalPortrait(author);
+                      authorinfo python: mtool.getMemberInfo(author);">
 
         <div tal:replace="structure provider:plone.abovecontenttitle" />
 
@@ -134,6 +137,37 @@
              tal:attributes="class python:test(context.Format() in ('text/structured',
                                                    'text/x-rst', ), 'stx' + kss_class, 'plain' + kss_class)">
             <div metal:define-slot="inside" tal:replace="structure python: context.typogrify_text(text)">The body</div>
+        </div>
+        
+        <div tal:condition="authorinfo/fullname"
+             class="discreet">
+             <hr />
+            <img src="#"
+                 alt="#"
+                 class="image-left"
+                 style="float:left;margin-right:10px;"
+                 tal:attributes="src portrait/absolute_url;
+                                 alt authorinfo/fullname;" />
+            <p>Author Information:</p>
+            <p class="" tal:content="authorinfo/fullname">
+                Author Name
+            </p>
+            <p class="documentDescription" tal:content="authorinfo/description">
+                Author description.
+            </p>
+            <p>
+                <a href=""
+                   tal:attributes="href string:$here_url/search?Creator=${author}&amp;portal_type=News+Item&amp;sort_on=Date&amp;sort_order=reverse"
+                       i18n:translate="go_to_search_author_content">
+                        All posts by 
+                        <span i18n:name="user" tal:omit-tag="" tal:content="python:authorinfo['fullname'] or author"/>&hellip;</a>
+                |
+                <a href="#" 
+                   rel="nofollow"
+                   tal:condition="python: not mtool.getHomeFolder(id=author) and authorinfo['home_page']"
+                   tal:attributes="href authorinfo/home_page"
+                   i18n:translate="label_author_external_home_page">Author's external home page&hellip;</a>
+            </p>
         </div>
         
         <div metal:use-macro="context/document_relateditems/macros/relatedItems">
