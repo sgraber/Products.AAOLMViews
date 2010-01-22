@@ -152,7 +152,9 @@
             <p class="" tal:content="authorinfo/fullname">
                 Author Name
             </p>
-            <p class="documentDescription" tal:content="authorinfo/description">
+            <p class="documentDescription" 
+               tal:condition="authorinfo/description"
+               tal:content="authorinfo/description">
                 Author description.
             </p>
             <p>
@@ -161,12 +163,13 @@
                        i18n:translate="go_to_search_author_content">
                         All posts by 
                         <span i18n:name="user" tal:omit-tag="" tal:content="python:authorinfo['fullname'] or author"/>&hellip;</a>
-                |
-                <a href="#" 
-                   rel="nofollow"
-                   tal:condition="python: not mtool.getHomeFolder(id=author) and authorinfo['home_page']"
-                   tal:attributes="href authorinfo/home_page"
-                   i18n:translate="label_author_external_home_page">Author's external home page&hellip;</a>
+                <span tal:condition="python: not mtool.getHomeFolder(id=author) and authorinfo['home_page']">
+                    |
+                    <a href="#" 
+                       rel="nofollow"
+                       tal:attributes="href authorinfo/home_page"
+                       i18n:translate="label_author_external_home_page">Author's external home page&hellip;</a>
+                </span>
             </p>
         </div>
         
