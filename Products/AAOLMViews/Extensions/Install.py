@@ -35,7 +35,7 @@ def install(portal):
     news_item.default_view = view
     news_item.immediate_view = view
     if view not in news_item.view_methods:
-        news_item._updateProperty('view_methods', news.view_methods + (view,))
+        news_item._updateProperty('view_methods', news_item.view_methods + (view,))
         news_item.allow_discussion = True
     print >> out, "Tweaked 'News Item' FTU settings"    
     
