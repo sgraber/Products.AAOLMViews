@@ -25,6 +25,7 @@ setup(name='Products.AAOLMViews',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'z3c.autoinclude',
           # -*- Extra requirements: -*-
       ],
       entry_points="""
