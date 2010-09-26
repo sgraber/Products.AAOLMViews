@@ -1,27 +1,27 @@
-aaolm.portlet.facebook Installation
+Products.AAOLMViews Installation
 =======================
 
  * When you're reading this you have probably already run
-   ``easy_install aaolm.portlet.facebook``. Find out how to install setuptools
+   ``easy_install Products.AAOLMViews``. Find out how to install setuptools
    (and EasyInstall) here:
    http://peak.telecommunity.com/DevCenter/EasyInstall
 
- * Create a file called ``aaolm.portlet.facebook-configure.zcml`` in the
+ * Create a file called ``Products.AAOLMViews-configure.zcml`` in the
    ``/path/to/instance/etc/package-includes`` directory.  The file
    should only contain this::
 
-       <include package="aaolm.portlet.facebook" />
+       <include package="Products.AAOLMViews" />
 
 Alternatively, if you are using zc.buildout and the plone.recipe.zope2instance
 recipe to manage your project, you can do this:
 
- * Add ``aaolm.portlet.facebook`` to the list of eggs to install, e.g.:
+ * Add ``Products.AAOLMViews`` to the list of eggs to install, e.g.:
 
     [buildout]
     ...
     eggs =
         ...
-        aaolm.portlet.facebook
+        Products.AAOLMViews
 
   * Re-run buildout, e.g. with:
 
