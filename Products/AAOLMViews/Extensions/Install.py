@@ -16,7 +16,7 @@ def install(portal):
     skins_tool = getToolByName(portal, "portal_skins")
     aaolm_skin = "aaolm_views"
 
-    # Iterate over all existing skins and remove the one we don't want
+    # Iterate over all existing skins and add/remove the one we don't want
     skins = skins_tool.getSkinSelections()
     for skin in skins:
         path = skins_tool.getSkinPath(skin)
