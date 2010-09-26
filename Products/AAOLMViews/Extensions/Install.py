@@ -30,6 +30,7 @@ def install(portal):
             print >> out, "Added '%s' to portal_skins." % aaolm_skin
     
     # tweak News Item settings - make default view a Blog Entry
+    # and make news items commentable by default.
     news_item = getattr(portal_types, 'News Item')
     view = 'blogentry_view'
     news_item.default_view = view
