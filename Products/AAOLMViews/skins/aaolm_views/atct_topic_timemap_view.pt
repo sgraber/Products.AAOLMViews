@@ -1,0 +1,246 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      lang="en"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="plone">
+<!-- atct_topic_timemap_view.pt -->
+<!-- custom:START -->
+    <metal:css fill-slot="style_slot">
+        <style type="text/css">
+             #my-googlemap {float:right; margin-top:10px; margin-bottom:5px; height:200px; width:100%; border:1px solid #aaa;}
+             #my-timeline {float:right; margin-bottom:20px; height:150px; width:100%; border:1px solid #aaa;}
+        </style>
+    </metal:css>
+    <metal:js fill-slot="javascript_head_slot">
+        <script src="http://static.simile.mit.edu/timeline/api-2.3.0/timeline-api.js?bundle=true"></script>
+        <script src="http://maps.google.com/maps?file=api&v=2&sensor=false&key=ABQIAAAAaMwVgtFopMnEalK2u1wM7RT14iv1vk10FtGhcmEqC_oTNMuDARQOxWiK2NTcX3sOfVLAfY_aB2ixUQ" type="text/javascript"></script>
+        <script type="text/javascript" src="googlemaps.js"></script>
+        <script type="text/javascript"> 
+            jq(window).load(function() {
+                // For Timeline / Google Map event page mashup
+
+                // get our DOM objects & create obj list for our map
+                var objects = $(".location").get(); 
+                var addresses = []; 
+                var i=0;
+                for (i=0;i<=objects.length-1;i++) {
+                       addresses[i] = $(objects[i]).text();
+                       }
+                $("#my-googlemap").googlemap({
+                    controls: true,
+                    labels: true,
+                    latitude: 37.692,
+                    longitude: -97.3372222,
+                    html: ".location",
+                    zoom: 5,
+                    addresses: addresses,
+                    debug: true
+                });
+            });
+
+            // loads simile timeline 
+            function onLoad() {
+               var d=new Date();
+               dtUTC=d.toUTCString();
+
+               var tl;
+               var eventSource = new Timeline.DefaultEventSource(0);
+               
+               var bandInfos = [
+                 Timeline.createBandInfo({
+                     eventSource:    eventSource,
+                     date:           dtUTC,
+                     width:          "70%", 
+                     intervalUnit:   Timeline.DateTime.WEEK, 
+                     intervalPixels: 100
+                 }),
+                 Timeline.createBandInfo({
+                     eventSource:    eventSource,
+                     date:           dtUTC,
+                     width:          "30%", 
+                     intervalUnit:   Timeline.DateTime.MONTH, 
+                     intervalPixels: 200
+                 })
+               ];
+               
+               bandInfos[1].syncWith = 0;
+               bandInfos[1].highlight = true;
+               
+               tl = Timeline.create(document.getElementById("my-timeline"), bandInfos, Timeline.HORIZONTAL);
+               Timeline.loadXML("events.xml", function(xml, url) { eventSource.loadXML(xml, url); });
+            }
+            // resizes our timeline
+            var resizeTimerID = null;
+            function onResize() {
+                 if (resizeTimerID == null) {
+                     resizeTimerID = window.setTimeout(function() {
+                         resizeTimerID = null;
+                         tl.layout();
+                    }, 500);
+                }
+            }
+            // load our timeline function
+            $(window).load(function(){
+                onLoad();
+            });
+            // resize our timeline if window resized
+            $(window).resize(function(){
+                onResize();
+            }); 
+        </script>
+    </metal:js>
+<!-- custom:END -->
+
+<body>
+    
+<metal:content-core fill-slot="content-core">
+    <metal:body define-macro="body_macro"
+                tal:define="kssClassesView context/@@kss_field_decorator_view;
+                            getKssClasses nocall:kssClassesView/getKssClassesInlineEditable;
+                            templateId template/getId">
+
+<!-- custom:START -->
+        <div id="my-googlemap"></div>
+        <div id="my-timeline"></div>
+<!-- custom:END -->
+    
+        <metal:listingmacro define-macro="listing">
+        <tal:topiccontents define="topicContents python:here.queryCatalog(batch=True);
+                                   use_view_action site_properties/typesUseViewActionInListings|python:();
+                                   batch topicContents;">
+
+        <tal:listing condition="topicContents">
+            <a style='text-align: right' href="#"
+               tal:condition="nocall: here/asPDF|nothing"
+               tal:attributes="href string:${here_url}/asPDF/atct_topic_pdf_template/atct_topic_pdf"
+               i18n:translate="label_download_as_pdf"
+               i18n:domain="atcontenttypes">
+                Download PDF
+            </a>
+        </tal:listing>
+
+        <div metal:define-macro="text-field-view"
+             id="parent-fieldname-text" class="stx"
+             tal:define="kss_class python:getKssClasses('text',
+                         templateId=templateId, macro='text-field-view');
+                         text here/getText|nothing"
+             tal:condition="text"
+             tal:attributes="class python:test(here.Format() in ('text/structured',
+                                                   'text/x-rst', ), 'stx' + kss_class, 'plain' + kss_class)">
+            <div metal:define-slot="inside" tal:replace="structure text">The body</div>
+        </div>
+
+        <tal:listing condition="topicContents">
+            <tal:default condition="not:here/getCustomView|nothing"
+                         define="folderContents topicContents">
+                <metal:listing metal:use-macro="here/folder_listing/macros/listing">
+                    <metal:empty metal:fill-slot="no_items_in_listing"></metal:empty>
+                </metal:listing>
+
+            </tal:default>
+
+            <tal:custom condition="here/getCustomView|nothing"
+                        define="vocab python:here.listMetaDataFields(False)">
+
+                <table class="listing"
+                       summary="Content listing"
+                       i18n:attributes="summary summary_content_listing;">
+                     <thead>
+                        <tr>
+                            <th tal:repeat="field here/getCustomViewFields"
+                                tal:content="python:vocab.getValue(field, field)"
+                                i18n:translate=""/>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tal:brain tal:repeat="obj topicContents">
+                        <tr tal:define="oddrow repeat/obj/odd;"
+                            tal:attributes="class python:test(oddrow, 'even', 'odd')">
+                            <tal:fields repeat="field here/getCustomViewFields"
+                                        define="normalizeString nocall:context/@@plone/normalizeString;
+                                                url obj/getURL;
+                                                obj_type obj/portal_type;
+                                                obj_description obj/Description;
+                                                obj_typeinfo python: here.portal_types.getTypeInfo(obj_type);
+                                                obj_icon python:plone_view.getIcon(obj);
+                                                obj_wf_state obj/review_state|python: wtool.getInfoFor(obj, 'review_state', '');
+                                                obj_wf_state_class python:'state-' + normalizeString(obj_wf_state);
+                                                obj_url python:test(obj_type in use_view_action, url+'/view', url);
+                                                title_or_id obj/pretty_title_or_id">
+                            <tal:block define="value python: getattr(obj, field, None)">
+                                <td tal:condition="python: field != 'Title'"
+                                    tal:content="python:here.formatCatalogMetadata(value)"
+                                    i18n:translate=""/>
+                                <td tal:condition="python: field == 'Title'">
+                                    <a href="#" tal:attributes="href obj_url;
+                                                                title obj_description;">
+                                        <img src="#"
+                                             height="16"
+                                             width="16"
+                                             tal:condition="obj_icon/url"
+                                             tal:attributes="src obj_icon/url;
+                                                             alt obj_icon/description;
+                                                             title obj_icon/title;
+                                                             width obj_icon/width;
+                                                             height obj_icon/height;"/>
+                                    </a>
+                                    <a href="#"
+                                       tal:condition="python: obj.portal_type != 'Link'"
+                                       tal:attributes="href obj_url;
+                                                       class string:${obj_wf_state_class};
+                                                       title obj_description;"
+                                       tal:content="title_or_id">
+                                        Item Title
+                                    </a>
+
+                                    <a href="#"
+                                       tal:condition="python: obj.portal_type == 'Link'"
+                                       tal:attributes="href obj/getRemoteUrl;
+                                                       class string:${obj_wf_state_class} link-plain; 
+                                                       title obj_description;"
+                                       class="link-plain"
+                                       tal:content="title_or_id" />
+
+                   </td>
+                            </tal:block>
+                            </tal:fields>
+                        </tr>
+                        </tal:brain>
+                     </tbody>
+                </table>
+            </tal:custom>
+
+            </tal:listing>
+
+            <p class="discreet"
+               tal:condition="python: not topicContents and here.listCriteria()"
+               i18n:domain="atcontenttypes"
+               i18n:translate="description_no_items_in_topic">
+                There are currently no results for this search.
+            </p>
+
+            <p class="discreet"
+               tal:condition="not: here/listCriteria"
+               i18n:domain="atcontenttypes"
+               i18n:translate="description_no_criteria_in_topic">
+                There are currently no criteria on which to search.
+                Please add them using the 'criteria' tab.
+            </p>
+
+        </tal:topiccontents>
+        </metal:listingmacro>
+    </metal:body>
+
+    <metal:body define-macro="folderlisting_macro">
+        <tal:subtopics condition="here/hasSubtopics|nothing"
+                       define="folderContents here/listSubtopics|nothing">
+            <h2 i18n:domain="atcontenttypes"
+                i18n:translate="heading_contained_collections">
+                Also in this section
+            </h2>
+            <metal:list metal:use-macro="here/base/macros/folderlisting"/>
+        </tal:subtopics>
+    </metal:body>
+</metal:content-core>
+
+</body>
+</html>
