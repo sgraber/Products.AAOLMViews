@@ -1,0 +1,327 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone">
+      
+<!-- folder_summary_view.pt  Use for Issue TOC Listing -->
+
+<body> 
+    
+    <metal:content-core fill-slot="content-core">
+        <metal:block use-macro="context/folder_listing/macros/content-core">
+            <!-- we don't want the dl -->
+            <metal:entries fill-slot="entries">
+                <metal:block use-macro="context/folder_listing/macros/entries">
+                    <metal:entry fill-slot="entry">
+                
+                <!-- custom: Defines (below): item_url, item_id, item_img, item_album, item_authors: START / END -->
+                <div class="tileItem visualIEFloatFix" 
+                     tal:define="item_object item/getObject;
+                                 item_url item_object/absolute_url;
+                                 item_id item_object/getId;
+                                 item_img python: item_id + '.jpg';
+                                 item_album python: item_id + '_album';
+                                 getParentNode python: context.getParentNode();
+                                 folderContentIds python: getParentNode.contentIds();
+                                 item_authors item_object/Contributors|nothing;
+                                 ">
+                                                 
+                    <a href="#" 
+                       tal:condition="exists:item_object/image_thumb"
+                       tal:attributes="href python:test(item_type in use_view_action, item_url+'/view', item_url)">
+                        <img src="" alt=""
+                             tal:replace="structure python: path('nocall:item_object/tag')(scale='thumb', css_class='tileImage')" />
+                    </a>
+                    
+                    <!-- custom: TOC Image: START -->
+                    <a href="#" 
+                       tal:condition="python: item_img in folderContentIds"
+                       tal:attributes="href item_url">
+                        <img src="" 
+                             alt="TOC Photo" 
+                             class="tileImage"
+                             tal:attributes="src string:${item_img}/image_thumb;" />
+                    </a>
+                    <!-- custom: TOC Image: END -->
+                    
+                    
+                    <h2 class="tileHeadline"
+                        metal:define-macro="listitem">
+
+                        <a href="#"
+                           class="summary url"
+                           tal:attributes="href python:test(item_type in use_view_action, item_url+'/view', item_url);"
+                           tal:content="item_title_or_id">
+                            Item Title
+                        </a>
+
+                    </h2>
+
+                    <div class="documentByLine" tal:condition="python: site_properties.allowAnonymousViewAbout or not isAnon">
+                    <tal:event condition="python: item_type == 'Event'">
+                        <span tal:condition="python: item_type == 'Event' and item.location"
+                              i18n:translate="label_event_byline_with_location">
+                            (<span tal:content="string:${item/location}"
+                                   class="location"
+                                   i18n:name="location">Oslo</span>, from
+                             <abbr class="dtstart"
+                                   tal:attributes="title python:item_start"
+                                   tal:content="python:toLocalizedTime(item_start,long_format=1)"
+                                   i18n:name="start">from date</abbr> to
+                             <abbr class="dtend"
+                                   tal:attributes="title python:item_end"
+                                   tal:content="python:toLocalizedTime(item_end,long_format=1)"
+                                   i18n:name="end">to date</abbr>)
+                        </span>
+                        <span tal:condition="python: item_type == 'Event' and not item.location"
+                              i18n:translate="label_event_byline_without_location">
+                            (from
+                             <abbr class="dtstart"
+                                   tal:attributes="title python:item_start"
+                                   tal:content="python:toLocalizedTime(item_start,long_format=1)"
+                                   i18n:name="start">from date</abbr> to
+                             <abbr class="dtend"
+                                   tal:attributes="title python:item_end"
+                                   tal:content="python:toLocalizedTime(item_end,long_format=1)"
+                                   i18n:name="end">to date</abbr>)
+                        </span>
+                    </tal:event>
+                    <tal:newsitem condition="python: item_type == 'News Item'">
+                        <tal:name tal:condition="item_creator"
+                            tal:define="author python:pas_member.info(item_creator)">
+                          <span class="documentAuthor" i18n:translate="label_by_author">
+                            by
+                          <a href="#"
+                             tal:attributes="href string:${navigation_root_url}/author/${item_creator}"
+                             tal:content="author/name_or_id"
+                             tal:omit-tag="not:author"
+                             i18n:name="author">
+                            Bob Dobalina
+                          </a>
+                          </span>
+                        </tal:name>
+                        &mdash;
+                        <span class="documentModified">
+                              <tal:mod i18n:translate="box_last_modified">
+                              last modified
+                              </tal:mod>
+                              <span tal:replace="python:toLocalizedTime(item_modified,long_format=1)">
+                                      August 16, 2001 at 23:35:59
+                              </span>
+                        </span>
+                    </tal:newsitem>
+                    </div>
+                    
+                    <!-- custom: Authors: START -->
+                    <p class="tileBody" tal:condition="item_authors">
+                        By <span tal:replace="python: ', '.join(item_authors)">Author 1, Author 2, ...</span>
+                    </p>
+                    <!-- custom: Authors: END -->
+                    
+                    <p class="tileBody" tal:condition="item_description">
+                        <span class="description" tal:content="item_description">description</span>
+                    </p>
+
+                    <p class="tileFooter discreet" style="margin-top:30px;">
+                        <a href=""
+                           tal:attributes="href python:test(item_type in use_view_action, item_url+'/view', item_url);"
+                           i18n:translate="read_more">
+                            Read More&hellip;
+                        </a>
+                        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                        <a href="#"
+                           tal:condition="python: item_album in folderContentIds"
+                           tal:attributes="href python: '../' + item_album">
+                            View Photo Album
+                        </a>
+                        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                        <script tal:content="string:var idcomments_acct = 'e4e4e4a9d8ed15755bdc24e5fe4fb184';
+                                                    var idcomments_post_id = '${item_url}';
+                                                    var idcomments_post_url = '${item_url}';">
+                        </script>
+                        <script type="text/javascript" src="http://www.intensedebate.com/js/genericLinkWrapperV2.js"></script>
+                        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                        <iframe 
+                            id="facebook-count"
+                            tal:on-error="string:"
+                            src="#" 
+                            scrolling="no" 
+                            frameborder="0" 
+                            style="overflow:hidden; width:100px; height:21px; vertical-align:middle;" 
+                            allowTransparency="true"
+                            tal:attributes="src string:http://www.facebook.com/plugins/like.php?href=${item_url}&layout=button_count&show_faces=false&width=70&action=like&colorscheme=light&height=21">
+                        </iframe>
+                        <!-- custom: Photo Album: END -->
+                    </p>
+
+                    <div class="visualClear"><!-- --></div>
+
+                    <!-- TOC entries for News, Blog, Events go here -->
+                    
+                </div>
+                    </metal:entry>
+                </metal:block>
+            </metal:entries>
+        </metal:block>
+        
+        <!-- Stuff that goes BELOW the TOC entries goes here -->
+
+<div class="tileItem visualIEFloatFix">
+    <a href="#"
+       tal:attributes="href string:${portal_url}/events">
+        <img src="#"
+             tal:attributes="src string:${portal_url}/tocevents.jpg" alt="TOC Photo" class="tileImage">
+    </a>
+    
+    <h2 class="tileHeadline">
+        <a href="#" 
+           class="summary url"
+           tal:attributes="href string:${portal_url}/events">
+            Reefkeeping Events: What's Happening in Your Area?</a>
+    </h2>
+
+    <p class="tileBody">Submitted By Our Readers</p>
+
+    <p class="tileBody">
+        <span class="description">Check our Events calendar to see if a conference, 
+            frag swap, or club meeting is happening in your area.</span>
+    </p>
+
+    <p class="tileFooter discreet" style="margin-top:30px;">
+        <a href="#"
+           tal:attributes="href string:${portal_url}/events">
+            Check the Events Calendar Now&hellip;
+        </a>
+    </p>
+
+    <div class="visualClear"><!-- --></div>
+</div>
+
+<div class="tileItem visualIEFloatFix">
+    <a href="#"
+       tal:attributes="href string:${portal_url}/blog">
+        <img src="#"
+             tal:attributes="src string:${portal_url}/tocblog.jpg" alt="TOC Photo" class="tileImage">
+    </a>
+    
+    <h2 class="tileHeadline">
+        <a href="#" 
+           class="summary url"
+           tal:attributes="href string:${portal_url}/blog">
+            Blog:&nbsp;&nbsp;Join the Conversation</a>
+    </h2>
+
+    <p class="tileBody"><br /></p>
+
+    <p class="tileBody">
+        <span class="description">Founded in January 2002, Advanced Aquarist's Online Magazine is the 
+        longest running online reef aquarium publication in existence. We cover industry news, animal 
+        husbandry, aquarium maintenance, equipment, book reviews...the list goes on and on. Join the conversation!</span>
+    </p>
+
+    <p class="tileFooter discreet" style="margin-top:30px;">
+        <a href="#"
+           tal:attributes="href string:${portal_url}/blog">
+            Read Our Blog Now&hellip;
+        </a>
+    </p>
+
+    <div class="visualClear"><!-- --></div>
+</div>
+<br /><br /><br />
+<iframe src="http://www.facebook.com/plugins/likebox.php?id=165778111825&amp;width=625&amp;connections=22&amp;stream=false&amp;header=false&amp;height=255" frameborder="0" scrolling="no" id="facebook-likebox" style="width:100%; height:255px;"></iframe>
+
+
+	<table id="topic-toc" class="toc-table">
+		<caption></caption>
+		<thead></thead>
+		<tfoot></tfoot>
+	 	<tbody>
+	 		<tr valign="top">
+	 			<td>
+	 				<h2>Feedback</h2>
+					 <p>We welcome your
+					 feedback. If you have ideas for new subjects, articles, or for
+					 Advanced Aquarist&#39;s Online Magazine in general, please let us know
+					 either via our <a href="mailto:feedback@advancedaquarist.com?Subject=Advanced%20Aquarist%20Feedback">Feedback Email</a>
+					 or email them to our Editor, <a href="mailto:terry@advancedaquarist.com?CC=liquid@reefs.org&Subject=Advanced%20Aquarist%20Feedback">Terry
+					 Siegel</a>.</p>
+				</td>
+	 			<td>
+	 				<h2>Subscribe</h2>
+					 <p>Interested in
+					 being notified when the next issue of Advanced Aquarist's Online
+					 Magazine is available?  Either subscribe to our website news <img src="rss.gif" alt="RSS" style="border:0" />
+					 <a href=""
+					    tal:attributes="href string:$portal_url/search_rss?portal_type=Document&review_state=published&sort_on=modified&sort_order=reverse">RSS feed</a>
+					 or send an email to <a href="mailto:reefs-newsletter-subscribe@reefs.org">reefs-newsletter-subscribe@reefs.org</a>
+					 to subscribe to our notification newsletter.</p>
+	 				<p class="discreet">(This newsletter will also occasionally contain information about reefs.org updates in addition
+	      			to information about Advanced Aquarist.)</p>
+	 
+	 			</td>
+	 			<td>
+	 				<h2>Advertising</h2>
+					 <p>For information
+					 on advertising with Advanced Aquarist's Online Magazine, please <a href="mailto:advertising@advancedaquarist.com?CC=len@reefs.org&Subject=Advertising%20in%20Advanced%20Aquarist%20">contact
+					 us</a> via the provided link. We have a variety of packages that
+					 might be suitable for your business.</p>
+				</td>
+	 		</tr>
+	 		<tr valign="top">
+	 			<td>
+	 				<h2>Support our Sponsors</h2>
+					 <p>Please take a
+					 moment to check out the 
+					 <a href=""
+					    tal:attributes="href string:$portal_url/moreinfo/sponsors"> various
+					 online stores</a> that advertise with us. It is through their generous
+					 sponsorship that this online magazine exists and is free of charge. </p>
+					 <p>Make
+					 sure that when you do business with our sponsors that you tell
+					 them that you saw their ad on Advanced Aquarist.</p>
+				</td>
+	 			<td>
+	 				<h2>Advanced Aquarist's Gear</h2>
+					 <p>Take a minute
+					 to head over to our <a href="http://www.cafeshops.com/advaquarist">online
+					 store at Cafepress</a>. You can deck yourself out in Advanced Aquarist's
+					 gear: t-shirts, mugs, mousepads, etc. Plus purchasing items helps
+					 fund our online magazine to a small degree.
+					</p>
+	
+				  	<p align="center">
+				    	<a href="http://www.cafeshops.com/advaquarist" target="_blank">
+				      	<img src="" 
+				           tal:attributes="src string:$portal_url/toccafepress.jpg" 
+				           border="0" 
+				           height="187" 
+				           width="172"
+				           alt="Advanced Aquarist's Store at CafePress"
+				           title="Advanced Aquarist's Store at CafePress" />
+				    	</a>
+				  	</p>
+				</td>
+				<td>
+				   	<h2>Article Submissions</h2>
+				   	<p>If you are an
+					 author and are interested in writing for Advanced Aquarist's Online
+					 Magazine, please email our Editor, <a href="mailto:terry@advancedaquarist.com">Terry
+					 Siegel</a>.</p>
+					 <p>Or, if you are
+					 interested in having your marine aquarium featured in an upcoming
+					 issue (who wouldn't?), please email <a href="mailto:wade@reefs.org">Wade
+					 Lehmann</a> for instructions on submitting your tank for publication.</p>
+				</td>
+	 		</tr>
+	 	</tbody>
+	</table>
+
+        
+    </metal:content-core>
+    
+</body>
+</html>
