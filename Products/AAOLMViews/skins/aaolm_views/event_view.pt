@@ -3,17 +3,21 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       lang="en"
-      metal:use-macro="here/main_template/macros/master"
+      metal:use-macro="context/main_template/macros/master"
       i18n:domain="plone">
-      
+
+    <metal:css fill-slot="style_slot">
+        <style type="text/css">
+             #my-googlemap {float:right; margin-top:10px; margin-bottom:10px; height:200px; width:100%; border:1px solid #aaa;}
+        </style>
+    </metal:css>
     <metal:js fill-slot="javascript_head_slot">
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
         <script src="http://maps.google.com/maps?file=api&v=2&sensor=false&key=ABQIAAAAaMwVgtFopMnEalK2u1wM7RT14iv1vk10FtGhcmEqC_oTNMuDARQOxWiK2NTcX3sOfVLAfY_aB2ixUQ" type="text/javascript"></script>
         <script type="text/javascript" src="googlemaps.js"></script>
         <script type="text/javascript"> 
-            $(document).ready(function() {
-                var address = [];
-                address[0] = $("#parent-fieldname-location").text().strip();
+            jq(window).load(function() {
+                  var address = [];
+                  address[0] = $("#parent-fieldname-location").text();
                 $("#my-googlemap").googlemap({
                     controls: true,
                     labels: false,
@@ -26,206 +30,182 @@
             }); 
         </script>
     </metal:js>
+
 <body>
 
-<div metal:fill-slot="main">
-    <tal:main-macro metal:define-macro="main" 
-         tal:define="kssClassesView context/@@kss_field_decorator_view;
-                     getKssClasses nocall:kssClassesView/getKssClassesInlineEditable;
-                     templateId template/getId">
+<metal:content-core fill-slot="content-core">
+    <metal:content-core define-macro="content-core"
+                        tal:define="kssClassesView context/@@kss_field_decorator_view;
+                                    getKssClasses nocall:kssClassesView/getKssClassesInlineEditable;
+                                    templateId template/getId;
+                                    toLocalizedTime nocall:context/@@plone/toLocalizedTime;">
 
-        <div tal:replace="structure provider:plone.abovecontenttitle" />
 
-        <div class="vevent">
-
-        <h1 class="documentFirstHeading summary"> 
-            <metal:field use-macro="python:here.widget('title', mode='view')">
-            Title
-            </metal:field>
-        </h1>
-
-        <div tal:replace="structure provider:plone.belowcontenttitle" />
-
-        <p class="documentDescription">
-            <metal:field use-macro="python:here.widget('description', mode='view')">
-            Description
-            </metal:field>
-        </p>
-                
-        <div tal:replace="structure provider:plone.abovecontentbody" />
-
-        <div id="my-googlemap" 
-             style="float:right;margin-top:10px;margin-bottom:10px;height:200px;width:100%;"
-             tal:condition="here/location"></div>
+        <div id="my-googlemap" tal:condition="context/location"></div>
 
         <div class="eventDetails vcard">
-        <table class="vertical listing"
-               summary="Event details" i18n:attributes="summary summary_event_details;">
+            <table class="vertical listing"
+                   summary="Event details" i18n:attributes="summary summary_event_details;">
 
-            <tbody>
+                <tbody>
 
-                <tr>
-                    <th i18n:translate="event_what">What</th>
-                    <td>
-                        <metal:field use-macro="python:here.widget('subject', mode='view')">
-                        Categories
-                        </metal:field>
-                    </td>
-                </tr>
-                <tr>
-                    <th i18n:translate="event_when">When</th>
-                    <td>
-                        <tal:differentday tal:condition="python:not here.start().Date() == here.end().Date()">
-                            <abbr metal:define-macro="startdate-field-view"
-                                  tal:define="kss_class python:getKssClasses('startDate',
-                                              templateId=templateId, macro='startdate-field-view');"
-                                  id="parent-fieldname-startDate"
-                                  tal:attributes="class string:$kss_class dtstart;
-                                                  title python:here.end().ISO8601()">
-                                  <span metal:define-slot="inside" 
-                                        class="explain"
-                                        tal:content="python:here.toLocalizedTime(here.start(),
-                                        long_format=1)">Start Date Time</span>
-                            </abbr>
-                            <span i18n:translate="event_to">to</span> <br />
-                            <abbr metal:define-macro="enddate-field-view"
-                                  tal:define="kss_class python:getKssClasses('endDate',
-                                              templateId=templateId, macro='enddate-field-view');"
-                                  id="parent-fieldname-endDate"
-                                  tal:attributes="class string:$kss_class dtend;
-                                                  title python:here.end().ISO8601()">
-                                  <span metal:define-slot="inside" 
-                                          class="explain"
-                                          tal:content="python:here.toLocalizedTime(here.end(),
-                                          long_format=1)">End Date Time</span>
-                            </abbr>
-                        </tal:differentday>
+                    <tr tal:condition="context/Subject">
+                        <th i18n:translate="event_what">What</th>
+                        <td>
+                            <metal:field use-macro="python:context.widget('subject', mode='view')">
+                            Categories
+                            </metal:field>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th i18n:translate="event_when">When</th>
+                        <td>
+                            <tal:differentday tal:condition="python:not context.start().Date() == context.end().Date()"
+                                              i18n:translate="event_when_differentday">
+                                <abbr i18n:name="startdate"
+                                      metal:define-macro="startdate-field-view"
+                                      tal:define="kss_class python:getKssClasses('startDate',
+                                                  templateId=templateId, macro='startdate-field-view');"
+                                      id="parent-fieldname-startDate"
+                                      tal:attributes="class string:$kss_class dtstart;
+                                                      title python:context.start().ISO8601()">
+                                  <span metal:define-slot="inside" class="explain">
+                                    <span tal:replace="python:toLocalizedTime(context.start())">Start Date</span>
+                                    <tal:word i18n:translate="event_when_differentday_optional_word_between_date_and_time" />
+                                    <span tal:replace="python:toLocalizedTime(context.start(), time_only=1)">Start Time</span>
+                                  </span>
+                                </abbr> 
+                                to
+                                <br i18n:name="linebreak" />
+                                <abbr i18n:name="enddate"
+                                      metal:define-macro="enddate-field-view"
+                                      tal:define="kss_class python:getKssClasses('endDate',
+                                                  templateId=templateId, macro='enddate-field-view');"
+                                      id="parent-fieldname-endDate"
+                                      tal:attributes="class string:$kss_class dtend;
+                                                      title python:context.end().ISO8601()">
+                                   <span metal:define-slot="inside" class="explain">
+                                     <span tal:replace="python:toLocalizedTime(context.end())">End Date</span>
+                                     <tal:word i18n:translate="event_when_differentday_optional_word_between_date_and_time" />
+                                     <span tal:replace="python:toLocalizedTime(context.end(), time_only=1)">End Time</span>
+                                  </span>
+                                </abbr>
+                            </tal:differentday>
 
-                        <tal:sameday tal:condition="python:here.start().Date() == here.end().Date()"
-                                     tal:define="ampm python:site_properties.getProperty('localLongTimeFormat').find('%p') >= 0">
-                            <span tal:replace="python:toLocalizedTime(here.start())">
-                                Start Date Time</span> <br />
-                            <span i18n:translate="event_from">from</span>  
-                            <abbr metal:define-macro="startdatesame-field-view"
-                                  tal:define="ampm python:site_properties.getProperty('localLongTimeFormat').find('%p') >= 0;
-                                              kss_class python:getKssClasses('startDate',
-                                              templateId=templateId, macro='startdatesame-field-view');"
-                                  id="parent-fieldname-startDate"
-                                  tal:attributes="class string:$kss_class dtstart;
-                                                  title python:here.start().ISO8601()">
-                                  <span metal:define-slot="inside" 
-                                        tal:replace="python:test(ampm, here.start().AMPMMinutes(), here.start().TimeMinutes())">Start Time</span>
-                            </abbr>
-                            <span i18n:translate="event_to">to</span>
-                            <abbr metal:define-macro="enddatesame-field-view"
-                                  tal:define="ampm python:site_properties.getProperty('localLongTimeFormat').find('%p') >= 0;
-                                              kss_class python:getKssClasses('endDate',
-                                              templateId=templateId, macro='enddatesame-field-view');"
-                                  id="parent-fieldname-endDate"
-                                  tal:attributes="class string:$kss_class dtend;
-                                                  title python:here.end().ISO8601()">
-
-
-
-                                  <span metal:define-slot="inside" 
-                                        tal:replace="python:test(ampm, here.end().AMPMMinutes(), here.end().TimeMinutes())">End Time</span>
-                            </abbr>
-                            
-                            <!-- <span tal:replace="python:test(ampm, here.end().AMPMMinutes(), here.end().TimeMinutes())">End Time</span> -->
-                            
-                        </tal:sameday>
-
-                    </td>
-                </tr>
-                <tr tal:condition="here/location">
-                    <th i18n:translate="event_where">Where</th>
-                    <td class="location" 
-                        tal:define="url_quote_plus python:modules['Products.PythonScripts.standard'].url_quote_plus;
-                                    loc python:url_quote_plus(here.location);">
-                        <metal:field use-macro="python:here.widget('location', mode='view')">
-                        Location
-                        </metal:field>
-                        <br /><br />
-                        <a href="#" tal:attributes="href string:http://maps.google.com/maps?q=${loc}">Google Map</a>
-                    </td>
-                </tr>
-                <tr tal:define="contact_email here/contact_email;
-                                contact_name python:context.contact_name() or None;"
-                    tal:condition="python:contact_name or contact_email">
-                    <th i18n:translate="contact_name">Contact Name</th>
-                    <td>
-                        <a id="parent-fieldname-contactEmail"
-                           tal:condition="contact_email"
-                           tal:replace="structure python: here.spamProtect(mailaddress=contact_email, mailname=contact_name, cssclass='email fn')"
-                           />
-                        <span class="fn"
-                              tal:condition="not: contact_email"
-                              tal:content="contact_name" />
-                    </td>
-                </tr>
-                <tr tal:condition="here/contact_phone">
-                    <th i18n:translate="contact_phone">Contact Phone</th>
-                    <td class="tel">
-                        <metal:field use-macro="python:here.widget('contactPhone', mode='view')">
-                        Phone number
-                        </metal:field>
-                    </td>
-                </tr>
-                <tr tal:condition="here/getAttendees|nothing">
-                    <th i18n:translate="contact_attendees">Attendees</th>
-                    <td class="attendees">
-                        <metal:field use-macro="python:here.widget('attendees', mode='view')">
-                        Attendees
-                        </metal:field>
-                    </td>
-                </tr>
-                <tr>
-                    <th i18n:translate="heading_add_to_calendar">Add event to calendar</th>
-                    <td>
-                        <a href="#"
-                           tal:attributes="href string:$here_url/vcs_view"
-                           title="Download this event in vCal format"
-                           i18n:attributes="title title_add_to_vcal;">
-                            <img tal:replace="structure here/icon_export_vcal.png" src="" alt="" />
-                            <span i18n:translate="label_add_to_vcal">vCal</span></a><br />
-                        <a href="#"
-                           tal:attributes="href string:$here_url/ics_view"
-                           title="Download this event in iCal format"
-                           i18n:attributes="title title_add_to_ical;">
-                            <img tal:replace="structure here/icon_export_ical.png" src="" alt="" />
-                            <span i18n:translate="label_add_to_ical">iCal</span></a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                            <tal:sameday tal:condition="python:context.start().Date() == context.end().Date()"
+                                         tal:define="ampm
+                                         python:site_properties.getProperty('localLongTimeFormat').find('%p') >= 0"
+                                         i18n:translate="event_when_sameday">
+                                <span tal:replace="python:toLocalizedTime(context.start())"
+                                      i18n:name="date">
+                                    Start Date Time</span>
+                                <br i18n:name="linebreak" />
+                                from
+                                <abbr metal:define-macro="startdatesame-field-view"
+                                      tal:define="kss_class python:getKssClasses('startDate',
+                                                  templateId=templateId, macro='startdatesame-field-view');"
+                                      id="parent-fieldname-startDate"
+                                      tal:attributes="class string:$kss_class dtstart;
+                                                      title python:context.start().ISO8601()"
+                                      i18n:name="starttime">
+                                      <span metal:define-slot="inside" 
+                                            class="explain"
+                                            tal:content="python:toLocalizedTime(context.start(), time_only=1)">Start Time</span>
+                                </abbr> to
+                                <abbr metal:define-macro="enddatesame-field-view"
+                                      tal:define="kss_class python:getKssClasses('endDate',
+                                                  templateId=templateId, macro='enddatesame-field-view');"
+                                      id="parent-fieldname-endDate"
+                                      tal:attributes="class string:$kss_class dtend;
+                                                      title python:context.end().ISO8601()"
+                                      i18n:name="endtime">
+                                      <span metal:define-slot="inside" 
+                                            class="explain"
+                                            tal:content="python:toLocalizedTime(context.end(), time_only=1)">End Time</span>
+                                </abbr>
+                            </tal:sameday>
+                        </td>
+                    </tr>
+                    <tr tal:condition="context/location">
+                        <th i18n:translate="event_where">Where</th>
+                        <td class="location">
+                            <a href="#"
+                               tal:attributes="href string:http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=${context/location}">
+                                <metal:field use-macro="python:context.widget('location', mode='view')">
+                                    Location
+                                </metal:field>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr tal:define="contact_email context/contact_email;
+                                    contact_name python:context.contact_name() or None;"
+                        tal:condition="python:contact_name or contact_email">
+                        <th i18n:translate="contact_name">Contact Name</th>
+                        <td>
+                            <a id="parent-fieldname-contactEmail"
+                               tal:condition="contact_email"
+                               tal:replace="structure python: context.spamProtect(mailaddress=contact_email, mailname=contact_name, cssclass='email fn')"
+                               />
+                            <span class="fn"
+                                  tal:condition="not: contact_email"
+                                  tal:content="contact_name" />
+                        </td>
+                    </tr>
+                    <tr tal:condition="context/contact_phone">
+                        <th i18n:translate="contact_phone">Contact Phone</th>
+                        <td class="tel">
+                            <metal:field use-macro="python:context.widget('contactPhone', mode='view')">
+                            Phone number
+                            </metal:field>
+                        </td>
+                    </tr>
+                    <tr tal:condition="context/getAttendees|nothing">
+                        <th i18n:translate="contact_attendees">Attendees</th>
+                        <td class="attendees">
+                            <metal:field use-macro="python:context.widget('attendees', mode='view')">
+                            Attendees
+                            </metal:field>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th i18n:translate="heading_add_to_calendar">Add event to calendar</th>
+                        <td tal:define="here_url context/@@plone_context_state/object_url;">
+                            <a href="#"
+                               tal:attributes="href string:$here_url/vcs_view"
+                               title="Download this event in vCal format"
+                               i18n:attributes="title title_add_to_vcal;">
+                                <img tal:replace="structure context/icon_export_vcal.png" src="" alt="" />
+                                <span i18n:translate="label_add_to_vcal">vCal</span></a><br />
+                            <a href="#"
+                               tal:attributes="href string:$here_url/ics_view"
+                               title="Download this event in iCal format"
+                               i18n:attributes="title title_add_to_ical;">
+                                <img tal:replace="structure context/icon_export_ical.png" src="" alt="" />
+                                <span i18n:translate="label_add_to_ical">iCal</span></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <metal:field use-macro="python:here.widget('text', mode='view')">
+        <metal:field use-macro="python:context.widget('text', mode='view')">
         Body text
         </metal:field>
 
-        <p tal:condition="here/event_url|nothing">
+        <p tal:condition="context/event_url|nothing">
             <a class="url"
                href="event_url"
                i18n:translate="event_more_information"
-               tal:define="field python:context.getField('eventUrl');"                    
+               tal:define="field python:context.getField('eventUrl');"
                         id="parent-fieldname-eventUrl"
-                        tal:attributes="href here/event_url">
+                        tal:attributes="href context/event_url">
                More information about this event&hellip;</a>
         </p>
 
-        </div>
-
-        <div metal:use-macro="here/document_relateditems/macros/relatedItems">
-            show related items if they exist
-        </div>
-        
         <span class="visualClear"><!-- --></span>
 
-        <div tal:replace="structure provider:plone.belowcontentbody" />
-
-    </tal:main-macro>
-</div>
+    </metal:content-core>
+</metal:content-core>
 
 </body>
 </html>
