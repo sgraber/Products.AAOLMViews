@@ -7,6 +7,7 @@
 <data tal:define="toLocalizedTime nocall:context/@@plone/toLocalizedTime;
                   brains python:container.portal_catalog(portal_type='Event',
                                                          review_state=['published']);">
+
     <tal:listing condition="brains">
         <tal:block tal:repeat="brain brains">
             <tal:defs tal:define="item_start brain/start/ISO|brain/StartDate|nothing;
